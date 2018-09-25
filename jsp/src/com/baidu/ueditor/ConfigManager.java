@@ -24,6 +24,7 @@ import com.baidu.ueditor.define.ActionMap;
  */
 public final class ConfigManager {
 
+	private String saveRootPath;
 	private final String rootPath;
 	private final String originalPath;
 	private final String contextPath;
@@ -38,14 +39,15 @@ public final class ConfigManager {
 	/*
 	 * 通过一个给定的路径构建一个配置管理器， 该管理器要求地址路径所在目录下必须存在config.properties文件
 	 */
-	private ConfigManager ( String rootPath, String contextPath, String uri ) throws FileNotFoundException, IOException {
+	private ConfigManager ( String rootPath, String contextPath,String saveRootPath, String uri ) throws FileNotFoundException, IOException {
 		
 		rootPath = rootPath.replace( "\\", "/" );
 		
 		this.contextPath = contextPath;
 		
 		this.rootPath = rootPath;
-		
+		this.saveRootPath = saveRootPath;
+
 		this.originalPath = this.rootPath + uri;
 		
 		this.initEnv();
@@ -59,10 +61,10 @@ public final class ConfigManager {
 	 * @param uri 当前访问的uri
 	 * @return 配置管理器实例或者null
 	 */
-	public static ConfigManager getInstance ( String rootPath, String contextPath, String uri ) {
-		
+	public static ConfigManager getInstance ( String rootPath, String contextPath,String saveRootPath, String uri ) {
+		saveRootPath=saveRootPath;
 		try {
-			return new ConfigManager(rootPath, contextPath, uri);
+			return new ConfigManager(rootPath, contextPath,saveRootPath, uri);
 		} catch ( Exception e ) {
 			return null;
 		}
@@ -143,7 +145,8 @@ public final class ConfigManager {
 		
 		conf.put( "savePath", savePath );
 		conf.put( "rootPath", this.rootPath );
-		
+		conf.put( "saveRootPath", this.saveRootPath );
+
 		return conf;
 		
 	}

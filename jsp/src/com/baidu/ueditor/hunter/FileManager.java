@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+
 import org.apache.commons.io.FileUtils;
 
 import com.baidu.ueditor.PathFormat;
@@ -23,7 +24,12 @@ public class FileManager {
 	public FileManager ( Map<String, Object> conf ) {
 
 		this.rootPath = (String)conf.get( "rootPath" );
-		this.dir = this.rootPath + (String)conf.get( "dir" );
+		String dir=(String)conf.get( "dir");
+		if(!dir.startsWith("/")){
+			this.dir = this.rootPath + (String)conf.get( "dir" );
+		}else{
+			this.dir =  (String)conf.get( "dir" );
+		}
 		this.allowFiles = this.getAllowFiles( conf.get("allowFiles") );
 		this.count = (Integer)conf.get( "count" );
 		
@@ -79,15 +85,18 @@ public class FileManager {
 		
 	}
 	
-	private String getPath ( File file ) {
+	private  String getPath ( File file ) {
 		
 		String path = PathFormat.format( file.getAbsolutePath() );
-		
+		//自定义 消除windows目录带盘符
+		if(path.indexOf(":")>0&&path.indexOf(":")< path.indexOf("/")){
+            return path.substring(path.indexOf("/"));
+        }
 		return path.replace( this.rootPath, "/" );
-		
 	}
-	
-	private String[] getAllowFiles ( Object fileExt ) {
+
+
+    private String[] getAllowFiles ( Object fileExt ) {
 		
 		String[] exts = null;
 		String ext = null;
@@ -95,9 +104,7 @@ public class FileManager {
 		if ( fileExt == null ) {
 			return new String[ 0 ];
 		}
-		
 		exts = (String[])fileExt;
-		
 		for ( int i = 0, len = exts.length; i < len; i++ ) {
 			
 			ext = exts[ i ];
